@@ -1,3 +1,30 @@
+/**
+ * Taken from the Klasa Core project
+ * https://github.com/dirigeants/core/blob/master/src/lib/caching/structures/Embed.ts
+ *
+ * 	MIT License
+ *
+ *	Copyright (c) 2017-2020 dirigeants
+ *
+ *	Permission is hereby granted, free of charge, to any person obtaining a copy
+ *	of this software and associated documentation files (the "Software"), to deal
+ *	in the Software without restriction, including without limitation the rights
+ *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the Software is
+ *	furnished to do so, subject to the following conditions:
+ *
+ *	The above copyright notice and this permission notice shall be included in all
+ *	copies or substantial portions of the Software.
+ *
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *	SOFTWARE.
+ */
+
 import { deepClone } from '@klasa/utils';
 
 import {
@@ -19,7 +46,6 @@ export interface StringResolvable {
  * Handles Embed creation and received embeds
  */
 export class Embed implements APIEmbedData {
-
 	/**
 	 * Embed Fields.
 	 * @since 0.0.1
@@ -113,46 +139,56 @@ export class Embed implements APIEmbedData {
 
 		this.fields = data.fields ? data.fields.map(deepClone) : [];
 
-		this.thumbnail = data.thumbnail ? {
-			url: data.thumbnail.url,
-			// eslint-disable-next-line @typescript-eslint/camelcase
-			proxy_url: data.thumbnail.proxy_url,
-			height: data.thumbnail.height,
-			width: data.thumbnail.width,
-		} : undefined;
+		this.thumbnail = data.thumbnail
+			? {
+					url: data.thumbnail.url,
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					proxy_url: data.thumbnail.proxy_url,
+					height: data.thumbnail.height,
+					width: data.thumbnail.width,
+			  }
+			: undefined;
 
-		this.image = data.image ? {
-			url: data.image.url,
-			// eslint-disable-next-line @typescript-eslint/camelcase
-			proxy_url: data.image.proxy_url,
-			height: data.image.height,
-			width: data.image.width,
-		} : undefined;
+		this.image = data.image
+			? {
+					url: data.image.url,
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					proxy_url: data.image.proxy_url,
+					height: data.image.height,
+					width: data.image.width,
+			  }
+			: undefined;
 
-		this.video = data.video ? {
-			url: data.video.url,
-			height: data.video.height,
-			width: data.video.width,
-		} : undefined;
+		this.video = data.video
+			? {
+					url: data.video.url,
+					height: data.video.height,
+					width: data.video.width,
+			  }
+			: undefined;
 
-		this.author = data.author ? {
-			name: data.author.name,
-			url: data.author.url,
-			// eslint-disable-next-line @typescript-eslint/camelcase
-			icon_url: data.author.icon_url,
-			// eslint-disable-next-line @typescript-eslint/camelcase
-			proxy_icon_url: data.author.proxy_icon_url,
-		} : undefined;
+		this.author = data.author
+			? {
+					name: data.author.name,
+					url: data.author.url,
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					icon_url: data.author.icon_url,
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					proxy_icon_url: data.author.proxy_icon_url,
+			  }
+			: undefined;
 
 		this.provider = data.provider;
 
-		this.footer = data.footer ? {
-			text: data.footer.text,
-			// eslint-disable-next-line @typescript-eslint/camelcase
-			icon_url: data.footer.icon_url,
-			// eslint-disable-next-line @typescript-eslint/camelcase
-			proxy_icon_url: data.footer.proxy_icon_url,
-		} : undefined;
+		this.footer = data.footer
+			? {
+					text: data.footer.text,
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					icon_url: data.footer.icon_url,
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					proxy_icon_url: data.footer.proxy_icon_url,
+			  }
+			: undefined;
 	}
 
 	/**
@@ -196,7 +232,13 @@ export class Embed implements APIEmbedData {
 	 * @param value The field value to insert
 	 * @param inline If the inserted field is inline
 	 */
-	public spliceField(index: number, deleteCount: number, name?: StringResolvable, value?: StringResolvable, inline?: boolean): this {
+	public spliceField(
+		index: number,
+		deleteCount: number,
+		name?: StringResolvable,
+		value?: StringResolvable,
+		inline?: boolean,
+	): this {
 		if (name && value) this.fields.splice(index, deleteCount, Embed.checkField(name, value, inline));
 		else this.fields.splice(index, deleteCount);
 		return this;
@@ -343,10 +385,11 @@ export class Embed implements APIEmbedData {
 	 */
 	private static checkField(name: StringResolvable, value: StringResolvable, inline = false): APIEmbedFieldData {
 		name = String(name);
-		if (typeof name !== 'string') throw new TypeError(`Embed field name must be a string or have a toString() method, received: ${typeof name}`);
+		if (typeof name !== 'string')
+			throw new TypeError(`Embed field name must be a string or have a toString() method, received: ${typeof name}`);
 		value = String(value);
-		if (typeof value !== 'string') throw new TypeError(`Embed field value must be a string or have a toString() method: ${typeof value}`);
+		if (typeof value !== 'string')
+			throw new TypeError(`Embed field value must be a string or have a toString() method: ${typeof value}`);
 		return { name, value, inline };
 	}
-
 }

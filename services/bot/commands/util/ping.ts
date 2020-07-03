@@ -1,5 +1,6 @@
 import { Command } from '../../structures/commands/Command';
 import { APIMessageData } from '@klasa/dapi-types';
+import { PermissionsFlags } from '../../util/Permissions';
 
 export default class extends Command {
 	public constructor() {
@@ -10,7 +11,7 @@ export default class extends Command {
 			meta: {
 				description: 'Measures the Discord API ReST latency.',
 			},
-			clientPermissions: new Command.Permissions(Command.Permissions.FLAGS.SEND_MESSAGES),
+			clientPermissions: [PermissionsFlags.SendMessages],
 		});
 	}
 

@@ -1,5 +1,4 @@
 import Handler, { Modules, HandlerOptions } from '../core/Handler';
-import { Permissions } from '@spectacles/util';
 import { Command } from './Command';
 import * as Lexure from 'lexure';
 import { APIMessageData } from '@klasa/dapi-types';
@@ -9,6 +8,7 @@ export enum CommandHandlerEvents {
 	COMMAND_BLOCKED = 'commandBlocked',
 	COMMAND_RAN = 'commandRan',
 	MISSING_PERMISSIONS = 'missingPermissions',
+	RATELIMIT = 'ratelimit',
 }
 
 export type PrefixSupplier = (msg: APIMessageData) => string | string[];
@@ -50,6 +50,12 @@ export default class CommandHandler extends Handler<Command> {
 		listener: (msg: APIMessageData, args: Lexure.ParserOutput | null, command: Command) => void,
 	): this;
 
+	public on(
+		event: CommandHandlerEvents.MISSING_PERMISSIONS,
+		listener: (msg: APIMessageData, command: Command, level: 'user' | 'client', permissions: Permissions) => void,
+	): this;
+
+	public on(event: CommandHandlerEvents.RATELIMIT, litsener: (msg: APIMessageData, command: Command) => void): this;
 	public on(event: string, listener: (...args: any[]) => void): this {
 		return super.on(event, listener);
 	}
@@ -91,32 +97,31 @@ export default class CommandHandler extends Handler<Command> {
 		const command = commands.first();
 		if (!command) return;
 
-		const guild = await this.client.util.getGuild(msg.guild_id);
-
 		const RATELIMIT_KEY = `rl.${command.id}.${msg.guild_id ?? 'DMS'}.${msg.author}`;
 		const exists = await this.client.redis.get(RATELIMIT_KEY);
+
 		// TODO: handle command ratelimit
 		if (exists) {
+			this.emit(CommandHandlerEvents.RATELIMIT, msg, command);
 			return;
 		}
 
 		if (command.userPermissions) {
-			const permissions = new Permissions();
-			permissions.apply({ member: msg.member!, guild });
+			const permissions = await this.client.util.fetchPermissions(msg.guild_id, msg.author.id);
 
 			// TODO: handle missing permissions
-			if (!permissions.has(command.userPermissions.bitfield)) {
+			if (!permissions || !permissions.has(command.userPermissions)) {
+				this.emit(CommandHandlerEvents.MISSING_PERMISSIONS, msg, command, 'user', permissions);
 				return;
 			}
 		}
 
 		if (command.clientPermissions) {
-			const member = await this.client.util.fetchMember(msg.guild_id, this.client.user!.id);
-			const permissions = new Permissions();
-			permissions.apply({ member, guild });
+			const permissions = await this.client.util.fetchPermissions(msg.guild_id, this.client.user!.id);
 
 			// TODO: handle missing permissions
-			if (!permissions.has(command.clientPermissions.bitfield)) {
+			if (!permissions || !permissions.has(command.clientPermissions)) {
+				this.emit(CommandHandlerEvents.MISSING_PERMISSIONS, msg, command, 'client', permissions);
 				return;
 			}
 		}
@@ -156,7 +161,7 @@ export default class CommandHandler extends Handler<Command> {
 			const imported = 'default' in _raw ? _raw.default : _raw;
 			const command: Command = new imported();
 			command.client = this.client;
-			command.fullPath  = file;
+			command.fullPath = file;
 
 			// handle aliases
 			for (const alias of command.aliases) {

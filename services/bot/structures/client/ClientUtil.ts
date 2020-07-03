@@ -1,8 +1,8 @@
-import { APIEmbedData, APIMessageData, APIUserData, APIGuildData, APIGuildMemberData } from '@klasa/dapi-types';
+import { APIEmbedData, APIGuildData, APIGuildMemberData, APIMessageData, APIUserData } from '@klasa/dapi-types';
 import { Routes } from '../../util/constants';
-import Client from './Client';
 import { Embed } from '../../util/embed';
-import { Permissions } from '@spectacles/util';
+import { Permissions } from '../../util/Permissions';
+import Client from './Client';
 
 // https://github.com/dirigeants/core/blob/master/src/lib/caching/structures/messages/MessageBuilder.ts
 export interface MessageData {
@@ -30,11 +30,12 @@ export default class ClientUtil {
 		return this.client.rest;
 	}
 
-	public stringToJson<T>(data: string): T | undefined {
+	public stringToJson<T>(data: string): T | null {
 		try {
 			return JSON.parse(data) as T;
 		} catch {}
-		return;
+
+		return null;
 	}
 
 	public embed(data?: APIEmbedData) {
@@ -46,12 +47,12 @@ export default class ClientUtil {
 	}
 
 	public async sendMessage(channelId: string, data: MessageData): Promise<APIMessageData> {
-		const res = await this.rest.post(this.routes.channelMessages(channelId), { ...data });
+		const res = await this.rest.post(this.routes.channelMessages(channelId), { data });
 		return res as APIMessageData;
 	}
 
 	public async editMessage(channelId: string, messageId: string, data: MessageData): Promise<APIMessageData> {
-		const res = await this.rest.patch(this.routes.channelMessage(channelId, messageId), { ...data });
+		const res = await this.rest.patch(this.routes.channelMessage(channelId, messageId), { data });
 		return res as APIMessageData;
 	}
 
@@ -102,20 +103,27 @@ export default class ClientUtil {
 		return null;
 	}
 
+	public async getUser(Id: string): Promise<APIUserData> {
+		return (await this.rest.get(Routes.user(Id))) as APIUserData;
+	}
+
 	public async fetchPermissions(guildId: string, memberId: string, force = false): Promise<Permissions | null> {
 		// try fetching from redis first
 		if (!force) {
 			const cached = await this.client.redis.get(`permissions.${guildId}.${memberId}`);
 			if (cached) {
 				const parsed = parseInt(cached, 10);
-				if (!isNaN(parsed)) return new Permissions(parsed);
+				if (!isNaN(parsed)) return new Permissions(parsed).freeze();
 			}
 		}
 
 		const guild = await this.fetchGuild(guildId);
 		const member = await this.fetchMember(guildId, memberId);
+
 		if (guild && member) {
-			const permissions = new Permissions().apply({ guild, member });
+			const roles = member.roles.map(id => guild.roles.find(r => r.id === id)!);
+			const permissions = new Permissions(roles.map(r => r.permissions));
+
 			await this.client.redis.set(`permissions.${guildId}.${memberId}`, permissions.bitfield.toString());
 			return permissions;
 		}

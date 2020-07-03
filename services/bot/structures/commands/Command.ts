@@ -1,4 +1,4 @@
-import { Permissions } from '@spectacles/util';
+import { Permissions, PermissionsResolvable } from '../../util/Permissions';
 import Module from '../core/Module';
 
 export interface CommandOptions {
@@ -6,8 +6,8 @@ export interface CommandOptions {
 	category: string;
 	meta: CommandMeta;
 	parseArgs: boolean;
-	clientPermissions?: Permissions;
-	userPermissions?: Permissions;
+	clientPermissions?: PermissionsResolvable;
+	userPermissions?: PermissionsResolvable;
 }
 
 export interface CommandFlag {
@@ -51,12 +51,12 @@ export class Command extends Module {
 	/**
 	 * the permissions the client requires to handle the command
 	 */
-	public clientPermissions?: Permissions;
+	public clientPermissions?: PermissionsResolvable;
 
 	/**
 	 * the permissions the user requires to handle the command
 	 */
-	public userPermissions?: Permissions;
+	public userPermissions?: PermissionsResolvable;
 
 	public constructor(
 		id: string,
@@ -72,7 +72,8 @@ export class Command extends Module {
 		this.userPermissions = userPermissions;
 	}
 
-	public run(..._: any[]): unknown { // eslint-disable-line no-unused-vars
+	public run(...args: any[]): unknown {
+		// eslint-disable-line no-unused-vars
 		throw Error(`Function "run" is not implemented on command "${this.id}"`);
 	}
 

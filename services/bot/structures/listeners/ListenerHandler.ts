@@ -42,7 +42,10 @@ export default class ListenerHandler extends Handler<Listener> {
 	public async load() {
 		for (const module of this.modules.values()) {
 			const emitter = this.emitters[module.emitter];
-			if (!emitter) throw Error(`[LISTENERS:UNKNOWN_EMITTER]: Recieved unknown emitter '${module.emitter}' on event '${module.event}'.`);
+			if (!emitter)
+				throw Error(
+					`[LISTENERS:UNKNOWN_EMITTER]: Recieved unknown emitter '${module.emitter}' on event '${module.event}'.`,
+				);
 			emitter.on(module.event, (...args) => module.run(args));
 		}
 	}

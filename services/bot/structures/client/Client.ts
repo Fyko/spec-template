@@ -1,6 +1,6 @@
 import { APIUserData } from '@klasa/dapi-types';
 import { Amqp } from '@spectacles/brokers';
-import Rest, { RedisMutex } from '@spectacles/rest';
+import { REST } from '@klasa/rest';
 import { join } from 'path';
 import { WebSocketEvents } from '../../util/constants';
 import { logger } from '../../util/logger';
@@ -52,16 +52,15 @@ export default class Client {
 	/**
 	 * the discord rest interface
 	 */
-	public readonly rest = new Rest({
-		token: DISCORD_TOKEN,
-		mutex: new RedisMutex(redis),
-	});
+	public readonly rest = new REST();
 
 	public user?: APIUserData;
 
 	public readonly util: ClientUtil = new ClientUtil(this);
 
 	public async launch() {
+		this.rest.token = DISCORD_TOKEN!;
+
 		// load all the commands and listeners
 		this.logger.debug(`[COMMAND HANDLER]: Loading all commands...`);
 		await this.commandHandler.loadAll();
@@ -109,6 +108,6 @@ export default class Client {
 		await this.broker.subscribe(Array.from(events));
 		this.logger.info(`[RABBIT]: Subscribed to ${events.size} events!`);
 
-		this.user = await this.rest.get('/users/@me');
+		this.user = await this.util.getUser('@me');
 	}
 }

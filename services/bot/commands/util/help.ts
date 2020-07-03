@@ -3,7 +3,7 @@ import { stripIndents } from 'common-tags';
 import { Args, ParserOutput } from 'lexure';
 import { Command } from '../../structures/commands/Command';
 import { groupBy } from '../../util';
-import { Permissions } from '@spectacles/util';
+import { PermissionsFlags } from '../../util/Permissions';
 
 export default class extends Command {
 	public constructor() {
@@ -16,9 +16,7 @@ export default class extends Command {
 				usage: '[command/category]',
 				examples: ['ping', 'utilities'],
 			},
-			clientPermissions: new Permissions()
-				.add(Command.Permissions.FLAGS.SEND_MESSAGES)
-				.add(Command.Permissions.FLAGS.EMBED_LINKS),
+			clientPermissions: [PermissionsFlags.SendMessages, PermissionsFlags.EmbedLinks],
 		});
 	}
 

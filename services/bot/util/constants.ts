@@ -1,6 +1,6 @@
-import { APIGuildUnavailable, APIUserData } from '@klasa/dapi-types';
 /**
  * https://github.com/dirigeants/rest/blob/master/src/util/Constants.ts
+ *
  * 	MIT License
  *
  *	Copyright (c) 2017-2020 dirigeants
@@ -23,6 +23,9 @@ import { APIGuildUnavailable, APIUserData } from '@klasa/dapi-types';
  *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *	SOFTWARE.
  */
+
+import { APIGuildUnavailable, APIUserData } from '@klasa/dapi-types';
+
 export const Routes = {
 	channel: (channelID: string): string => `/channels/${channelID}`,
 	channelInvites: (channelID: string): string => `/channels/${channelID}/invites`,
