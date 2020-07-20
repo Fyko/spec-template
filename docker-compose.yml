@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  # discord gateway
+  gateway:
+    build: docker/gateway
+    restart: unless-stopped
+    ports: 
+      - 4500:4500
+    expose:
+      - 4500
+
+  # message broker for the gateway
+  rabbit:
+    image: rabbitmq:alpine
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=supersecurepasswordnobodywillknow
+    ports:
+      - 5672:5672
+    expose:
+      - 5672
+

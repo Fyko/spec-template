@@ -1,0 +1,18 @@
+{
+  "name": "guide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@spectacles/brokers": "^0.8.0",
+    "@spectacles/rest": "^0.8.3",
+    "@spectacles/util": "^0.4.0",
+    "dotenv": "^8.2.0"
+  }
+}
