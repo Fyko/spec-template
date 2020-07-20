@@ -95,14 +95,12 @@ async function handleMessage(msg) {
 Finally, the `bootstrap` function creates all listeners on the broker instance, connects to RabbitMQ and subscribes to the events we're using.
 ```js
 async function bootstrap() {	
-	// crate an event listener for the READY event
 	broker.on('READY', ({ user }, { ack }) => {
 		ack();
 
 		console.log(`${user.username}${user.discriminator} (${user.id}) has emitted READY.`);
 	});
 
-	// create an event listener for the MESSAGE_CREATE event
 	broker.on('MESSAGE_CREATE', (data, { ack }) => {
 		ack();
 
