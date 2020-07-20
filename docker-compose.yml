@@ -5,7 +5,7 @@ services:
   gateway:
     build: docker/gateway
     restart: unless-stopped
-    ports: 
+    ports:
       - 4500:4500
     expose:
       - 4500
@@ -21,4 +21,3 @@ services:
       - 5672:5672
     expose:
       - 5672
-
