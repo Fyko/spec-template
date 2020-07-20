@@ -45,12 +45,14 @@ services:
   # message broker for the gateway
   rabbit:
     image: rabbitmq:alpine
-	restart: unless-stopped
-	environment:
+    restart: unless-stopped
+    environment:
       - RABBITMQ_DEFAULT_USER=admin
-	  - RABBITMQ_DEFAULT_PASS=supersecurepasswordnobodywillknow
-	expose:
-	  - 5672
+      - RABBITMQ_DEFAULT_PASS=supersecurepasswordnobodywillknow
+    ports:
+      - 5672:5672
+    expose:
+      - 5672
 ```
 * `services` is where we declare our services; later down the road you'll add more services here, such as misc. workers or an API that'll also interact with rabbit
 	- `gateway` is our instance of the spectacles gateway that you'll setup [later](./prereq.md##Writing-the-gateway-Dockerfile)
