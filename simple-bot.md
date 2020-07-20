@@ -6,10 +6,9 @@ Create a new Node.js project with `npm init -y` and install the dependencies:
 
 * [spectacles/brokers](https://github.com/spec-tacles/brokers.js) - used to connect to RabbitMQ 
 * [spectacles/rest](https://github.com/spec-tacles/rest.js) - used to interact with the Discord ReST API
-* [spectacles/util](https://github.com/spec-tacles/util.js) - standard utilities such as Permissions
 * [dotenv](https://npmjs.org/dotenv) - to load our .env file  
 
-`npm i dotenv @spectacles/brokers @spectacles/rest @spectacles/util`
+`npm i @spectacles/brokers @spectacles/rest dotenv`
 
 ## Create a .env file
 Create a `.env` file and write:
