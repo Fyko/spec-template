@@ -64,9 +64,10 @@ export default class Proxy {
 	 * Performs an RPC call to the proxy
 	 * @param request The request data
 	 */
-	public async request<T = any>(request: Request): Promise<Response<T>> {
-		const response = await this.broker.call(this.options.event, request);
-		return response;
+	public async request<T = any>(request: Request): Promise<T> {
+		const { body }: Response<T> = await this.broker.call(this.options.event, request);
+		if (typeof body === 'string') throw Error(body);
+		return body.body;
 	}
 
 	/**

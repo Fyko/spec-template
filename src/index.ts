@@ -37,11 +37,7 @@ async function sendMessage(channelId: string, data: MessageData | string): Promi
 	else request.body = data;
 
 	// finally perform our request
-	const { body } = await proxy.request<Message>(request);
-
-	// if the body here is a string, the request failed
-	if (typeof body === 'string') throw Error(body);
-	return body.body;
+	return proxy.request<Message>(request);
 }
 
 // edit a message, basically everything from above
@@ -57,10 +53,7 @@ async function editMessage(channelId: string, messageId: string, data: MessageDa
 	// @ts-ignore
 	else request.body = data;
 
-	const res = await proxy.request<Message>(request);
-
-	if (typeof res.body === 'string') throw Error(res.body);
-	return res.body.body as Message;
+	return proxy.request<Message>(request);
 }
 
 // handle a message from the gateway
