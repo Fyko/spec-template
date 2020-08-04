@@ -1,0 +1,36 @@
+{
+    "name": "proxy",
+    "version": "0.1.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "eslint . --ext .ts --fix",
+        "cleardir": "rm -rf dist/*",
+        "compile": "tsc -b --verbose",
+        "build": "pnpm run cleardir && pnpm run compile",
+        "prestart": "pnpm run build",
+        "start": "node ."
+    },
+    "dependencies": {
+        "@spectacles/brokers": "^0.8.0",
+        "@spectacles/types": "^0.2.1",
+        "ioredis": "^4.17.3",
+        "lexure": "^0.6.0",
+        "tslib": "^2.0.0"
+    },
+    "devDependencies": {
+        "@types/common-tags": "^1.8.0",
+        "@types/ioredis": "^4.16.7",
+        "@types/node": "^13.13.12",
+        "@typescript-eslint/eslint-plugin": "^2.34.0",
+        "@typescript-eslint/parser": "^2.34.0",
+        "eslint": "^6.8.0",
+        "eslint-config-marine": "^6.0.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "prettier": "^1.19.1",
+        "rimraf": "^3.0.2",
+        "typescript": "^3.9.5"
+    }
+}
